@@ -8,10 +8,10 @@ import { Link } from "react-router-dom";
 const MobileNav = () => {
   return (
     <Sheet>
-      <SheetTrigger>
-        {/* <Button variant="outline"> */}
-          <RxHamburgerMenu />
-        {/* </Button> */}
+      <SheetTrigger asChild>
+        <button className="p-2 hover:bg-white/10 rounded-lg transition-all">
+          <RxHamburgerMenu className="w-7 h-7 text-white" />
+        </button>
       </SheetTrigger>
       <SheetContent className="w-fit">
         <div className="flex flex-col pr-10 py-5 gap-y-4">

@@ -83,7 +83,7 @@ const Navbar = () => {
         </div>
 
         {/* Right Side - Search and Mobile Menu */}
-        <div className="flex gap-3 items-center">
+        <div className="flex gap-3 md:gap-4 items-center">
           <form onSubmit={handleSubmit} className="relative">
             <Input
               placeholder="Search movies..."
@@ -94,7 +94,7 @@ const Navbar = () => {
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
           </form>
 
-          <div className="block md:hidden">
+          <div className="block md:hidden ml-1">
             <MobileNav />
           </div>
         </div>

@@ -325,6 +325,153 @@
   }
 }
 
+/* Mobile Detail Page Optimizations */
+@media (max-width: 767px) {
+  /* Hide scrollbar but keep functionality */
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* Snap scroll for horizontal lists */
+  .snap-x {
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .snap-start {
+    scroll-snap-align: start;
+  }
+
+  .snap-mandatory {
+    scroll-snap-type: x mandatory;
+  }
+
+  /* Active scale effect for mobile interactions */
+  .active\:scale-95:active {
+    transform: scale(0.95);
+  }
+
+  .active\:scale-98:active {
+    transform: scale(0.98);
+  }
+
+  /* Smooth scrolling for mobile */
+  html {
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* Prevent text selection on swipeable elements */
+  .touch-none {
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  /* Mobile poster positioning */
+  .poster-small {
+    will-change: transform;
+    contain: layout style paint;
+  }
+
+  /* Episode card optimizations */
+  .episode-card-mobile {
+    contain: content;
+    will-change: transform;
+  }
+
+  /* Optimize font rendering on mobile */
+  h1, h2, h3, h4, h5, h6 {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+}
+
+/* Touch target minimum size (WCAG AAA) */
+@media (max-width: 767px) {
+  button, a, [role="button"] {
+    min-height: 44px;
+    min-width: 44px;
+  }
+
+  /* Smaller interactive elements need proper spacing */
+  .touch-target {
+    padding: 11px;
+  }
+}
+
+/* Line clamp utilities for different line counts */
+.line-clamp-1 {
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.line-clamp-4 {
+  display: -webkit-box;
+  -webkit-line-clamp: 4;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* Mobile episode list */
+@media (max-width: 767px) {
+  .episode-list-mobile {
+    contain: content;
+  }
+
+  .episode-thumbnail {
+    contain: layout style paint;
+  }
+}
+
+/* Horizontal scroll indicator fade */
+.scroll-fade-right {
+  -webkit-mask-image: linear-gradient(to right, black 85%, transparent 100%);
+  mask-image: linear-gradient(to right, black 85%, transparent 100%);
+}
+
+/* Performance optimizations */
+.will-change-transform {
+  will-change: transform;
+}
+
+.will-change-opacity {
+  will-change: opacity;
+}
+
+/* Mobile video player */
+@media (max-width: 767px) {
+  .mobile-video-player {
+    width: 100vw;
+    aspect-ratio: 16/9;
+    margin-left: -15px;
+    margin-right: -15px;
+  }
+}
+
+/* Safe area support for notched devices */
+@supports (padding: env(safe-area-inset-bottom)) {
+  @media (max-width: 767px) {
+    .safe-bottom {
+      padding-bottom: calc(env(safe-area-inset-bottom) + 15px);
+    }
+
+    .safe-top {
+      padding-top: calc(env(safe-area-inset-top) + 15px);
+    }
+  }
+}
+
 
 
 

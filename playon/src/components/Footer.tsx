@@ -9,7 +9,7 @@ const Footer = () => {
           {/* Brand Section */}
           <div className="col-span-1 md:col-span-2">
             <h2 className="text-3xl font-bold bg-gradient-to-r from-pink-500 to-purple-600 text-transparent bg-clip-text mb-3">
-              CineVerse
+              PlayOn
             </h2>
             <p className="text-gray-400 text-sm mb-4 max-w-md">
               Your ultimate destination for discovering movies and TV shows. Explore trending content, find your favorites, and enjoy the magic of cinema.
@@ -128,7 +128,7 @@ const Footer = () => {
         {/* Bottom Bar */}
         <div className="border-t border-gray-800 mt-8 pt-8 text-center">
           <p className="text-gray-500 text-sm">
-            © 2026 CineVerse. All rights reserved. Powered by{" "}
+            © 2026 PLayOn. All rights reserved. Powered by{" "}
             <a
               href="https://www.themoviedb.org/"
               target="_blank"
