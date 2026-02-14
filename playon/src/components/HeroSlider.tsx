@@ -1,5 +1,5 @@
 // @ts-nocheck
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Play, Plus } from "lucide-react";
 
 interface HeroSlide {
@@ -21,14 +21,21 @@ interface Props {
 const HeroSlider = ({ slides }: Props) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isAnimating, setIsAnimating] = useState(false);
+  const [touchStart, setTouchStart] = useState(0);
+  const [touchEnd, setTouchEnd] = useState(0);
+  const [isPaused, setIsPaused] = useState(false);
+  const sliderRef = useRef<HTMLDivElement>(null);
 
+  // Auto-play slider
   useEffect(() => {
+    if (isPaused) return;
+    
     const interval = setInterval(() => {
       goToNext();
     }, 5000);
 
     return () => clearInterval(interval);
-  }, [currentIndex, slides.length]);
+  }, [currentIndex, slides.length, isPaused]);
 
   const goToSlide = (index: number) => {
     if (isAnimating) return;
@@ -41,14 +48,66 @@ const HeroSlider = ({ slides }: Props) => {
     goToSlide(currentIndex === slides.length - 1 ? 0 : currentIndex + 1);
   };
 
+  const goToPrev = () => {
+    goToSlide(currentIndex === 0 ? slides.length - 1 : currentIndex - 1);
+  };
+
+  // Touch handlers for swipe gestures
+  const handleTouchStart = (e: React.TouchEvent) => {
+    setTouchStart(e.targetTouches[0].clientX);
+    setIsPaused(true);
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    setTouchEnd(e.targetTouches[0].clientX);
+  };
+
+  const handleTouchEnd = () => {
+    if (!touchStart || !touchEnd) return;
+    
+    const distance = touchStart - touchEnd;
+    const minSwipeDistance = 50;
+
+    if (distance > minSwipeDistance) {
+      // Swiped left - go to next
+      goToNext();
+    } else if (distance < -minSwipeDistance) {
+      // Swiped right - go to previous
+      goToPrev();
+    }
+
+    // Reset touch positions
+    setTouchStart(0);
+    setTouchEnd(0);
+    setIsPaused(false);
+  };
+
   if (!slides || slides.length === 0) return null;
 
   const currentSlide = slides[currentIndex];
   const title = currentSlide.title || currentSlide.name;
   const year = currentSlide.release_date?.split("-")[0] || currentSlide.first_air_date?.split("-")[0];
 
+  // Calculate runtime display
+  const runtime = currentSlide.runtime;
+  const runtimeDisplay = runtime 
+    ? runtime >= 60 
+      ? `${Math.floor(runtime / 60)}h ${runtime % 60}m`
+      : `${runtime}m`
+    : null;
+
   return (
-    <div className="hero-slider relative w-full h-[85vh] overflow-hidden">
+    <div 
+      ref={sliderRef}
+      className="hero-slider relative w-full h-[100vh] md:h-[85vh] overflow-hidden select-none"
+      onTouchStart={handleTouchStart}
+      onTouchMove={handleTouchMove}
+      onTouchEnd={handleTouchEnd}
+      style={{
+        paddingTop: 'env(safe-area-inset-top)',
+        willChange: 'transform'
+      }}
+    >
       {/* Background Images */}
       {slides.map((slide, index) => (
         <div
@@ -57,70 +116,115 @@ const HeroSlider = ({ slides }: Props) => {
             index === currentIndex ? "opacity-100" : "opacity-0"
           }`}
         >
-          <div className="absolute inset-0 bg-gradient-to-r from-black via-black/70 to-transparent z-10" />
-          <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a0a] via-transparent to-transparent z-10" />
+          {/* Mobile gradient overlay - bottom to top */}
+          <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a0a] via-[#0a0a0a]/80 to-transparent z-10 md:hidden" />
+          
+          {/* Desktop gradient overlay */}
+          <div className="hidden md:block absolute inset-0 bg-gradient-to-r from-black via-black/70 to-transparent z-10" />
+          <div className="hidden md:block absolute inset-0 bg-gradient-to-t from-[#0a0a0a] via-transparent to-transparent z-10" />
+          
           <img
             src={`https://image.tmdb.org/t/p/original${slide.backdrop_path}`}
             alt={slide.title || slide.name}
-            className="w-full h-full object-cover"
+            className="w-full h-full object-cover brightness-[0.35] md:brightness-100"
+            loading={index === 0 ? "eager" : "lazy"}
+            style={{ willChange: 'opacity' }}
           />
         </div>
       ))}
 
-      {/* Content */}
-      <div className="absolute inset-0 z-20 flex items-end">
-        <div className="container mx-auto px-6 md:px-10 pb-20">
+      {/* Content - Mobile bottom positioning */}
+      <div 
+        className="absolute inset-0 z-20 flex items-end"
+        style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}
+      >
+        <div className="w-full px-5 pb-[60px] md:container md:mx-auto md:px-10 md:pb-20">
           <div
-            className={`hero-content max-w-2xl transition-all duration-700 ${
-              isAnimating ? "opacity-0 translate-y-4" : "opacity-100 translate-y-0"
+            className={`hero-content max-w-full md:max-w-2xl transition-all duration-700 ${
+              isAnimating ? "opacity-0 translate-x-[-20px]" : "opacity-100 translate-x-0"
             }`}
+            style={{ willChange: 'transform, opacity' }}
           >
-            {/* Badges */}
-            <div className="flex gap-2 mb-4">
-              <span className="badge-hd px-3 py-1 text-xs font-bold bg-gradient-to-r from-pink-600 to-purple-600 rounded">
+            {/* Status Badge - Mobile optimized */}
+            <div className="flex gap-2 mb-[10px] md:mb-4">
+              <span className="badge-hd px-3 py-[6px] md:py-1 text-[10px] md:text-xs font-bold bg-[#ff006e]/90 rounded-[15px] animate-pulse shadow-lg shadow-pink-500/30">
                 HD
               </span>
               {currentSlide.vote_average >= 8 && (
-                <span className="badge-new px-3 py-1 text-xs font-bold bg-gradient-to-r from-pink-500 to-red-500 rounded">
+                <span className="badge-new px-3 py-[6px] md:py-1 text-[10px] md:text-xs font-bold bg-gradient-to-r from-pink-500 to-red-500 rounded-[15px] shadow-lg shadow-pink-500/30">
                   TRENDING
                 </span>
               )}
             </div>
 
-            {/* Title */}
-            <h1 className="text-5xl md:text-7xl font-bold text-white mb-4 leading-tight">
+            {/* Title - Mobile optimized with text shadow */}
+            <h1 
+              className="text-[28px] leading-[1.2] tracking-[-0.5px] md:text-5xl lg:text-7xl font-black text-white mb-[12px] md:mb-4 md:leading-tight line-clamp-2"
+              style={{ 
+                textShadow: '2px 2px 8px rgba(0,0,0,0.9)',
+                willChange: 'transform'
+              }}
+            >
               {title}
             </h1>
 
-            {/* Meta Info */}
-            <div className="flex items-center gap-4 mb-4 text-sm md:text-base">
+            {/* Meta Info - Mobile optimized with responsive layout */}
+            <div className="flex flex-wrap items-center gap-3 md:gap-4 mb-[15px] md:mb-4 text-[13px] md:text-base">
               <div className="flex items-center gap-1">
-                <span className="text-pink-500">★</span>
+                <span className="text-[#ffd700] text-[14px]">★</span>
                 <span className="text-white font-semibold">
                   {currentSlide.vote_average.toFixed(1)}
                 </span>
                 <span className="text-gray-400">/10</span>
               </div>
-              {year && (
-                <span className="text-gray-300 font-medium">{year}</span>
-              )}
-              {currentSlide.runtime && (
-                <span className="text-gray-300">{currentSlide.runtime} min</span>
+              
+              {(year || runtimeDisplay) && (
+                <>
+                  <span className="text-[#e0e0e0]">•</span>
+                  
+                  {year && (
+                    <span className="text-[#e0e0e0] font-medium">{year}</span>
+                  )}
+                  
+                  {year && runtimeDisplay && (
+                    <span className="text-[#e0e0e0]">•</span>
+                  )}
+                  
+                  {runtimeDisplay && (
+                    <span className="text-[#e0e0e0]">{runtimeDisplay}</span>
+                  )}
+                </>
               )}
             </div>
 
-            {/* Description */}
-            <p className="text-gray-300 text-sm md:text-base mb-6 line-clamp-3 max-w-xl">
+            {/* Description - Mobile optimized with line clamp */}
+            <p 
+              className="text-[#cccccc] text-[14px] leading-[1.5] md:text-base mb-[20px] md:mb-6 line-clamp-3 max-w-full md:max-w-xl"
+              style={{
+                display: '-webkit-box',
+                WebkitLineClamp: 3,
+                WebkitBoxOrient: 'vertical',
+                overflow: 'hidden'
+              }}
+            >
               {currentSlide.overview}
             </p>
 
-            {/* Buttons */}
-            <div className="flex gap-4">
-              <button className="hero-btn-primary flex items-center gap-2 px-8 py-3 bg-gradient-to-r from-pink-600 to-pink-700 hover:from-pink-500 hover:to-pink-600 text-white font-semibold rounded-lg transition-all transform hover:scale-105">
+            {/* Buttons - Vertically stacked on mobile, horizontal on desktop */}
+            <div className="flex flex-col md:flex-row gap-3 md:gap-4 w-full md:w-auto">
+              <button 
+                className="hero-btn-primary flex items-center justify-center gap-2 w-full md:w-auto px-8 py-3 h-[48px] bg-[#ff006e] hover:bg-[#d10058] text-white text-[15px] font-semibold rounded-lg transition-all transform active:scale-95 md:hover:scale-105 shadow-[0_4px_15px_rgba(255,0,110,0.3)]"
+                style={{ willChange: 'transform' }}
+                aria-label="Watch now"
+              >
                 <Play className="w-5 h-5" fill="white" />
                 Watch Now
               </button>
-              <button className="hero-btn-secondary flex items-center gap-2 px-8 py-3 bg-white/10 backdrop-blur-md hover:bg-white/20 text-white font-semibold rounded-lg border border-white/20 transition-all">
+              <button 
+                className="hero-btn-secondary flex items-center justify-center gap-2 w-full md:w-auto px-8 py-3 h-[48px] bg-transparent backdrop-blur-[10px] hover:bg-white/20 text-white text-[15px] font-semibold rounded-lg border-2 border-white transition-all active:scale-95"
+                style={{ willChange: 'transform' }}
+                aria-label="Add to list"
+              >
                 <Plus className="w-5 h-5" />
                 Add to List
               </button>
@@ -129,17 +233,21 @@ const HeroSlider = ({ slides }: Props) => {
         </div>
       </div>
 
-      {/* Navigation Dots */}
-      <div className="absolute bottom-8 right-8 z-30 flex gap-2">
+      {/* Navigation Dots - Mobile centered bottom, Desktop right */}
+      <div className="absolute bottom-5 left-1/2 -translate-x-1/2 md:bottom-8 md:left-auto md:right-8 md:translate-x-0 z-30 flex gap-2 md:gap-2">
         {slides.map((_, index) => (
           <button
             key={index}
             onClick={() => goToSlide(index)}
-            className={`w-3 h-3 rounded-full transition-all ${
+            className={`rounded-full transition-all touch-manipulation ${
               index === currentIndex
-                ? "bg-pink-600 w-8"
-                : "bg-white/40 hover:bg-white/60"
+                ? "bg-[#ff006e] w-[10px] h-[10px] md:w-8 md:h-3"
+                : "bg-white/50 w-[8px] h-[8px] md:w-3 md:h-3 hover:bg-white/60"
             }`}
+            style={{ 
+              minWidth: index === currentIndex ? '10px' : '8px',
+              minHeight: index === currentIndex ? '10px' : '8px'
+            }}
             aria-label={`Go to slide ${index + 1}`}
           />
         ))}

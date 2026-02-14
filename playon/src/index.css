@@ -170,6 +170,161 @@
   }
 }
 
+/* Mobile Hero Section Optimizations */
+@media (max-width: 767px) {
+  .hero-slider {
+    height: 100vh;
+    position: relative;
+    contain: layout style paint;
+  }
+
+  .hero-content {
+    animation: fadeInLeft 0.8s ease-out;
+  }
+
+  /* Stagger animation for mobile buttons */
+  .hero-btn-primary {
+    animation: fadeInUp 0.8s ease-out 0.2s both;
+  }
+
+  .hero-btn-secondary {
+    animation: fadeInUp 0.8s ease-out 0.4s both;
+  }
+
+  /* Badge pulse animation */
+  .badge-hd {
+    animation: pulse 2s ease-in-out infinite;
+  }
+
+  /* Touch feedback */
+  .hero-slider button:active {
+    transform: scale(0.95);
+  }
+
+  /* Prevent text selection during swipe */
+  .hero-slider {
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  /* Safe area support for notched phones */
+  .hero-slider {
+    padding-top: env(safe-area-inset-top, 0);
+  }
+
+  /* Better text rendering on mobile */
+  .hero-slider h1 {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+}
+
+/* Small mobile screens (<375px) */
+@media (max-width: 374px) {
+  .hero-slider h1 {
+    font-size: 24px;
+  }
+
+  .hero-slider p {
+    font-size: 13px;
+  }
+
+  .hero-slider .hero-content {
+    padding-left: 15px;
+    padding-right: 15px;
+  }
+}
+
+/* Slide in from left animation */
+@keyframes fadeInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* Pulse animation for badges */
+@keyframes pulse {
+  0%, 100% {
+    opacity: 0.9;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.05);
+  }
+}
+
+/* GPU acceleration for better mobile performance */
+.hero-slider,
+.hero-content,
+.hero-btn-primary,
+.hero-btn-secondary {
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  perspective: 1000px;
+}
+
+/* Touch-friendly hover states for mobile */
+@media (hover: none) and (pointer: coarse) {
+  .hero-btn-primary:hover,
+  .hero-btn-secondary:hover {
+    transform: none;
+  }
+
+  .hero-btn-primary:active {
+    background: #d10058;
+    transform: scale(0.95);
+  }
+
+  .hero-btn-secondary:active {
+    background: rgba(255, 255, 255, 0.2);
+    transform: scale(0.95);
+  }
+}
+
+/* Line clamp fallback for older browsers */
+.line-clamp-3 {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* Smooth transitions for all interactions */
+@media (prefers-reduced-motion: no-preference) {
+  .hero-slider * {
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  }
+}
+
+/* Respect user's motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  .hero-slider *,
+  .hero-content,
+  .hero-btn-primary,
+  .hero-btn-secondary {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
 
 
 
