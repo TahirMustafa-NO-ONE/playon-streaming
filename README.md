@@ -2,6 +2,8 @@
 
 PlayOn is a modern movie and TV show streaming platform where you can discover, browse, and watch both movies and TV shows directly on the website. The platform features trending content, genre filtering, and a beautiful responsive interface.
 
+![PlayOn Screenshot](playon/src/assets/thumnail_playon.png)
+
 ## Table of Contents
 - [Features](#features)
 - [Tech Stack](#tech-stack)
