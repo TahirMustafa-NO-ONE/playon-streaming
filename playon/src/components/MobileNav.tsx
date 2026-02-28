@@ -14,13 +14,13 @@ const MobileNav = () => {
         </button>
       </SheetTrigger>
       <SheetContent className="w-fit">
-        <div className="flex flex-col pr-10 py-5 gap-y-4">
+        <div className="flex flex-col pr-10 py-8 gap-y-6">
           <Genres />
-          <Link to={`/movies`}>
-            <div>Movies</div>
+          <Link to={`/movies`} className="text-white hover:text-pink-500 transition-colors">
+            <div className="text-base font-medium">Movies</div>
           </Link>
-          <Link to={`/tvshows`}>
-            <div>TvShows</div>
+          <Link to={`/tvshows`} className="text-white hover:text-pink-500 transition-colors">
+            <div className="text-base font-medium">TvShows</div>
           </Link>
         </div>
       </SheetContent>
