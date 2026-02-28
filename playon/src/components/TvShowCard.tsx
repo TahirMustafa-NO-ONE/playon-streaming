@@ -22,13 +22,6 @@ const TvShowCard = ({ tvShowResult }) => {
           alt={tvShowResult.name}
           className="w-full h-auto object-cover transition-transform duration-500 group-hover:scale-110"
         />
-        
-        {/* Status Badge */}
-        <div className="absolute top-2 right-2 z-10">
-          <span className="px-2 py-1 text-xs font-bold bg-gradient-to-r from-pink-600 to-purple-600 rounded text-white">
-            HD
-          </span>
-        </div>
 
         {/* Hover Overlay */}
         <div className="absolute inset-0 bg-gradient-to-t from-black via-black/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-4">
