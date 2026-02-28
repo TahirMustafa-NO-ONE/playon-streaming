@@ -16,7 +16,7 @@ const Footer = () => {
             </p>
             <div className="flex gap-4">
               <a
-                href="https://github.com"
+                href="https://github.com/TahirMustafa-NO-ONE/playon-streaming"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="p-2 bg-white/5 hover:bg-white/10 rounded-full transition-all"
