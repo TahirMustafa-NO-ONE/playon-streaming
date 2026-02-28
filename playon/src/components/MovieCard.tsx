@@ -11,8 +11,15 @@ const MovieCard = ({ movieResult }: Props) => {
   const navigate = useNavigate();
   const year = movieResult.release_date?.split("-")[0];
   
+  const handleCardClick = () => {
+    navigate(`/player/${movieResult.id}`);
+  };
+  
   return (
-    <div className="movie-card group relative overflow-hidden rounded-lg cursor-pointer transition-all duration-300 hover:-translate-y-2">
+    <div 
+      onClick={handleCardClick}
+      className="movie-card group relative overflow-hidden rounded-lg cursor-pointer transition-all duration-300 hover:-translate-y-2"
+    >
       {/* Poster Image */}
       <div className="relative overflow-hidden rounded-lg">
         <img
